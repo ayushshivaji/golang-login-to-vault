@@ -22,6 +22,7 @@ func main(){
         unzipVault()
     }
     vaultLogin()
+    signSshKey()
 }
 
 func unzipVault(){
@@ -78,5 +79,11 @@ func vaultLogin() {
 }
 
 func signSshKey(){
-    signCommandString := "vault write -field=signed_key ssh-client-signer/sign/my-role public_key=@$HOME/.ssh/id_rsa.pub > id_rsa-cert.pub"
+    signCommandString := "vault write -field=signed_key ssh-test-blrvm2/sign/blrvm-developer public_key=@$HOME/.ssh/id_rsa.pub > id_rsa-cert.pub"
+    signCommand := exec.Command("sh", "-c", signCommandString)
+    outputSign, errSign := signCommand.CombinedOutput()
+    if errSign != nil {
+        log.Fatalf("ssh key signing failed with %s\n", errSign)
+    }
+    fmt.Printf("ssh key signing successful. Output:\n%s\n", string(outputSign))
 }
